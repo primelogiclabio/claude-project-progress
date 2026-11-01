@@ -1,9 +1,11 @@
 {
   "name": "project-progress",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "license": "MIT",
   "author": { "name": "prime" },
   "description": "Skill and pane: track long project work in PROGRESS.md: one item at a time with a plan, park side ideas instead of chasing them, checkpoint before /clear; a Progress pane shows where you are",
+  "homepage": "https://github.com/primelogiclabio/claude-project-progress",
+  "repository": "https://github.com/primelogiclabio/claude-project-progress",
   "skills": ["./"],
   "userConfig": {
     "showPane": {

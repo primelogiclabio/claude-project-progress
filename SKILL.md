@@ -158,4 +158,4 @@ Read PROGRESS.md and report in a few lines: the current focus, the next three it
 - Never remove Parking lot, Next or Related entries, or change Decisions, without the user's say.
 - Never start a second item while one is in Current focus.
 - PROGRESS.md stays where `init` created it. Never move it, or create a second one in the same folder tree, without asking.
-- In a repo with PROGRESS.md, "task" and "item" mean its entries unless the user names another list, such as the project-tracker mod's `.claude/tasks.md` or a personal tracker.
+- In a repo with PROGRESS.md, "task" and "item" mean its entries unless the user names another list, such as a `.claude/tasks.md` list or a personal tracker.

@@ -133,12 +133,11 @@ Set these in `/config`, or under `pluginConfigs.project-progress` in settings:
 | `showPane` | `true` | Open the pane at session start in a repo that has `PROGRESS.md` (or when `init` creates one mid-session). Off: it stays hidden until `/progress` shows it. |
 | `statusLine` | `false` | Show the current focus and the Next count in the status line. Off by default, since the pane shows the same. |
 
-## Not project-tracker
+## Coming from project-tracker
 
-It's not the same as the [project-tracker](../project-tracker/README.md)
-mod. project-tracker is a task list in a pane; project-progress is a
-focus-and-checkpoint workflow that also records decisions and parked ideas. They
-can be used together: name project-tracker's list when you mean it.
+project-progress replaces the old project-tracker mod, a task list in a pane
+that's no longer in the marketplace. project-progress is a focus-and-checkpoint
+workflow that also records decisions and parked ideas.
 
 ## Where it works
 
@@ -169,13 +168,13 @@ One line installs it, in either of two places:
 Both add the `claude-tools` marketplace first if you haven't added it yet.
 
 The step-by-step instructions are in the
-[repo README](../../README.md#installing). Notes specific to this skill:
+[repo README](https://github.com/primelogiclabio/claude-tools#installing). Notes specific to this skill:
 
 - **As a plain skill, without the plugin wrapper.** Link the folder into your
-  skills directory. Put your clone's path in place of `C:\src\claude-tools`:
+  skills directory. Put your clone's path in place of `C:\src\claude-project-progress`:
 
   ```powershell
-  New-Item -ItemType Junction -Path "$HOME\.claude\skills\project-progress" -Target "C:\src\claude-tools\plugins\project-progress"
+  New-Item -ItemType Junction -Path "$HOME\.claude\skills\project-progress" -Target "C:\src\claude-project-progress"
   ```
 
   Remove the link only with `cmd /c rmdir "$HOME\.claude\skills\project-progress"`.
