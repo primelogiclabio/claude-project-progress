@@ -61,6 +61,9 @@ let mtime = -1
 
 // The skill's "Where PROGRESS.md lives": the nearest folder up from the
 // session's that holds one, else the nearest git root, else the session's own.
+// Outside git nothing stops the walk before the drive root, so a topic folder's
+// file serves the plain folders below it, as its CLAUDE.md does; a repo inside
+// it stops the walk at its own root.
 async function findRoot($: EngineInterface, cwd: string): Promise<string> {
   for (let dir: string | null = cwd; dir !== null; dir = parent(dir)) {
     if (await $.fs.exists(join(dir, FILE))) return dir
