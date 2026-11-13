@@ -251,6 +251,39 @@ describe('project-progress pane', () => {
     expect(w.titles).toEqual(['Progress · work'])
   })
 
+  // /work is a topic folder outside git; /work/app is a repo inside it.
+  test('outside git a PROGRESS.md already in the session folder shows at start', async ($, on) => {
+    const w = world(on, { '/work/PROGRESS.md': FILE })
+    freshClock(on)
+    await $.session.start({ ...START, cwd: '/work' })
+    expect(w.titles).toEqual(['Progress · work'])
+    const text = await $.command.run({ ...RUN, command: 'progress', args: 'text' })
+    expect(text.text).toMatch(/^Goal: ship the app\./)
+  })
+
+  test("outside git a plain subfolder shows the topic folder's PROGRESS.md above it", async ($, on) => {
+    const w = world(on, { '/work/PROGRESS.md': FILE })
+    freshClock(on)
+    await $.session.start({ ...START, cwd: '/work/notes' })
+    expect(w.titles).toEqual(['Progress · work'])
+  })
+
+  test("a repo inside a topic folder shows its own PROGRESS.md, not the topic's", async ($, on) => {
+    const w = world(on, { '/work/PROGRESS.md': FILE, [PROGRESS]: FILE })
+    freshClock(on)
+    await $.session.start(START)
+    expect(w.titles).toEqual(['Progress · app'])
+  })
+
+  test("a repo inside a topic folder without its own PROGRESS.md doesn't take the topic's", async ($, on) => {
+    const w = world(on, { '/work/PROGRESS.md': FILE })
+    freshClock(on)
+    await $.session.start(START)
+    expect(w.opened).toEqual([])
+    const shown = await $.command.run({ ...RUN, command: 'progress', args: 'text' })
+    expect(shown.text).toBe(`No PROGRESS.md in this project yet. ${SKILL} init sets one up.`)
+  })
+
   for (const surface of ['terminal', 'desktop'] as const) {
     test(`the pane shows the file and its buttons fill the prompt (${surface})`, async ($, on) => {
       const w = world(on, { [PROGRESS]: FILE })
