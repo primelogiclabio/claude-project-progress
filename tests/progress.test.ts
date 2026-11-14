@@ -24,6 +24,9 @@ const FILE = [
   '## Parking lot',
   '- (none)',
   '',
+  '## Ideas',
+  '- Sync across machines',
+  '',
   '## Gotchas',
   '- The parser must not write',
   '',
@@ -45,6 +48,7 @@ describe('parse', () => {
     expect(doc.done).toEqual(['Decided the split'])
     expect(doc.decisions).toEqual(['Pane ships in the plugin because one install gets both'])
     expect(doc.parked).toEqual([])
+    expect(doc.ideas).toEqual(['Sync across machines'])
     expect(doc.gotchas).toEqual(['The parser must not write'])
     expect(doc.related).toEqual(['`../site`: the plugins page; update it when a plugin is added'])
     expect(openNext(doc).map(item => item.text)).toEqual(['Write the README', 'Re-test in a real session'])
@@ -94,7 +98,7 @@ describe('summary', () => {
         'Next:',
         '  1. Write the README',
         '  2. Re-test in a real session',
-        'Parked: 0 · Done: 1',
+        'Parked: 0 · Ideas: 1 · Done: 1',
       ].join('\n'),
     )
   })

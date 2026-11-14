@@ -8,7 +8,7 @@
 //   - (none)
 //   ## Next
 //   - [ ] ...
-//   ## Done (last 10) / ## Decisions / ## Parking lot / ## Gotchas / ## Related
+//   ## Done (last 10) / ## Decisions / ## Parking lot / ## Ideas / ## Gotchas / ## Related
 //   - ...
 //
 // Unknown headings and the lines under them are skipped, not dropped from
@@ -26,6 +26,7 @@ export const SECTION_TITLE: Record<SectionKey, string> = {
   done: 'Done',
   decisions: 'Decisions',
   parked: 'Parked',
+  ideas: 'Ideas',
   gotchas: 'Gotchas',
   related: 'Related',
 }
@@ -43,6 +44,7 @@ function sectionOf(heading: string): SectionKey | null {
   if (name.startsWith('done')) return 'done'
   if (name.startsWith('decisions')) return 'decisions'
   if (name.startsWith('parking lot') || name.startsWith('parked')) return 'parked'
+  if (name.startsWith('ideas')) return 'ideas'
   if (name.startsWith('gotchas')) return 'gotchas'
   if (name.startsWith('related')) return 'related'
 
@@ -50,7 +52,7 @@ function sectionOf(heading: string): SectionKey | null {
 }
 
 export function empty(): ProgressDoc {
-  return { goal: '', focus: [], next: [], done: [], decisions: [], parked: [], gotchas: [], related: [] }
+  return { goal: '', focus: [], next: [], done: [], decisions: [], parked: [], ideas: [], gotchas: [], related: [] }
 }
 
 export function parse(source: string): ProgressDoc {
@@ -134,7 +136,7 @@ export function summary(doc: ProgressDoc, exists: boolean, fileName = 'PROGRESS.
     next.slice(0, 3).forEach((item, i) => lines.push(`  ${i + 1}. ${item.text}`))
     if (next.length > 3) lines.push(`  …and ${next.length - 3} more`)
   }
-  lines.push(`Parked: ${doc.parked.length} · Done: ${doc.done.length}`)
+  lines.push(`Parked: ${doc.parked.length} · Ideas: ${doc.ideas.length} · Done: ${doc.done.length}`)
 
   return lines.join('\n')
 }

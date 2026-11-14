@@ -40,6 +40,9 @@ const FILE = [
   '## Parking lot',
   '- Try dark mode',
   '',
+  '## Ideas',
+  '- Sync across machines',
+  '',
   '## Gotchas',
   '- (none)',
   '',
@@ -296,6 +299,11 @@ describe('project-progress pane', () => {
 
       await ui.press({ key: 'fold-parked' })
       expect(await ui.find({ text: /Try dark mode/ })).toBeDefined()
+
+      expect(await ui.find({ text: /▸ Ideas 1/ })).toBeDefined()
+      expect(await ui.find({ text: /Sync across machines/ })).toBeUndefined()
+      await ui.press({ key: 'fold-ideas' })
+      expect(await ui.find({ text: /Sync across machines/ })).toBeDefined()
 
       expect(await ui.find({ text: /▸ Related 1/ })).toBeDefined()
       expect(await ui.find({ text: /the app page/ })).toBeUndefined()
