@@ -60,6 +60,18 @@ describe('parse', () => {
     expect(doc.related).toEqual([])
   })
 
+  test('an About line above Goal is skipped, and every section still reads', () => {
+    const withAbout = FILE.replace('Goal:', 'About: a Claude Code plugin; goal: not this one. It builds on `../shared`.\n\nGoal:')
+    expect(withAbout).toContain('About: ')
+    expect(parse(withAbout)).toEqual(parse(FILE))
+  })
+
+  test('an About line below Goal does not replace it', () => {
+    const doc = parse('# Progress\nGoal: x\nAbout: y\n## Next\n- [ ] z\n')
+    expect(doc.goal).toBe('x')
+    expect(doc.next).toEqual([{ text: 'z', isDone: false }])
+  })
+
   test('an indented line joins the entry above it', () => {
     const doc = parse('## Parking lot\n- First idea\n  with more words\n- Second\n')
     expect(doc.parked).toEqual(['First idea with more words', 'Second'])
@@ -85,6 +97,11 @@ describe('summary', () => {
         'Parked: 0 · Done: 1',
       ].join('\n'),
     )
+  })
+
+  test('leaves the About line out', () => {
+    const text = summary(parse(FILE.replace('Goal:', 'About: a plugin.\n\nGoal:')), true)
+    expect(text).toBe(summary(parse(FILE), true))
   })
 
   test('points at init, by the plugin name, when there is no file', () => {

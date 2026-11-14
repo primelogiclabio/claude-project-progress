@@ -33,7 +33,7 @@ The user usually won't name a mode. Map plain words like this:
 
 If PROGRESS.md doesn't exist and the mode isn't `init`, say so and offer `init`.
 
-Direct edits the user asks for in plain words, such as reordering Next, dropping a Next item or a parked idea, adding or dropping a Related entry, or rewording an entry, don't need a mode: make exactly that change and confirm in one line.
+Direct edits the user asks for in plain words, such as reordering Next, dropping a Next item or a parked idea, adding or dropping a Related entry, or rewording an entry, the About line or Goal, don't need a mode: make exactly that change and confirm in one line.
 
 ## PROGRESS.md format
 
@@ -41,6 +41,8 @@ Use exactly these sections:
 
 ```markdown
 # Progress
+
+About: ...
 
 Goal: ...
 
@@ -70,6 +72,7 @@ Rules for the file:
 
 - It is current state, not a log. Overwrite sections; never append a running history.
 - Keep the whole file under about 60 lines. It loads into every session.
+- About is one line of one or two sentences: what the project is and what it depends on, such as the libraries, services or repos it builds on, so a new session knows what it's looking at. It stays put: change it only when the user asks, not per item. Goal, also one line, is where the work is headed now. A file without About, from an older version of this skill, works the same in every mode.
 - Done keeps only the last 10 items. Drop older ones: git history has them, and outside git they're simply dropped, since Done is recent context, not a record.
 - One line per entry. No code snippets, file dumps or stack traces.
 - Decisions are one line each, with the reason.
@@ -88,10 +91,23 @@ Trimming: Done is trimmed automatically, but the other sections only grow. When 
 
 ## init
 
-1. If a PROGRESS.md already applies (see Where PROGRESS.md lives), never overwrite it. Show its Current focus and Next, do only the workflow-block check at the end of step 4, and stop.
-2. Ask the user in one message for the current goal plus the first few Next items, and whether PROGRESS.md should be committed or kept personal. If the session started in a subfolder of a git repo, also ask whether to track the whole repo or just this folder. Outside git, don't ask about committing: there's nothing to commit to. Also ask whether work here changes other folders or repos too, such as a docs site or a shared library, and what to update there. Most repos have none, while a topic folder outside git often points at the repos its source changes go to.
-3. Create PROGRESS.md from the template with their answers, in the folder Where PROGRESS.md lives gives. List any other places under Related, or write `- (none)`.
-4. Wire it in, in the same folder. If committed, edit `CLAUDE.md`. If personal, use `CLAUDE.local.md` and add its folder's `PROGRESS.md` and `CLAUDE.local.md` to the repo's local exclude file (its path comes from `git rev-parse --git-path info/exclude`), skipping either one if the file already lists it. Write the entries as paths from the git root: `/PROGRESS.md` at the root, `/packages/api/PROGRESS.md` in a subfolder (`git rev-parse --show-prefix` gives the prefix). Don't use `.gitignore` for this: it is committed, so the personal choice would end up in everyone's copy. Outside git, use `CLAUDE.md` and skip the exclude. Create `CLAUDE.md` or `CLAUDE.local.md` if it is missing. Add this block once:
+1. If a PROGRESS.md already applies (see Where PROGRESS.md lives), never overwrite it. Show its Current focus and Next, and do only these two checks, in one message, then stop:
+   - If it has no About line, draft one as step 2 does, from the conversation and the folder, and offer to add it above Goal. Add it only on a yes.
+   - The workflow-block check at the end of step 5.
+2. Gather before asking. Draft what you can without asking the user, from:
+   - this session's conversation so far;
+   - the project's folder, which is the session's folder and, in a git repo, the git root too: its README (in a topic folder outside git, its notes too), manifests such as `package.json`, `.claude-plugin/plugin.json`, `pyproject.toml`, `Cargo.toml`, `go.mod` or `pom.xml`, any `CLAUDE.md` or `CLAUDE.local.md`, and `.gitmodules`. Top-level files only: a quick read, not a survey of the code;
+   - the places it depends on or changes: folders or repos those files or the conversation point at, such as local path dependencies (`file:../shared` or workspace entries in `package.json`, `path = "../shared"` in `Cargo.toml` or `pyproject.toml`, a `replace` to `../shared` in `go.mod`), submodules, and `../name` paths or sibling repo names in those files. Outside git, the repos inside the folder too. Check that each one exists and read the top of its README to say what it is. List a place only for a reason like these, never every folder nearby.
+
+   From these, draft the About line, a goal and the first Next items if the conversation suggests them, and for each place found, either a Related entry, when work here also changes it, with what to update there, or a mention in About, when the work only uses it. `next` plans steps in Related places and `done` flags ones left unchanged, so a dependency nothing here changes doesn't belong there.
+3. Ask the user in one message, showing each draft so they can confirm or correct it in a few words. Write nothing before the answer.
+   - About: the draft, or what the project is about if there was nothing to go on.
+   - The current goal and the first few Next items: the drafts, or ask.
+   - The places found: each with its path, why it was found, and whether it's drafted for Related (with what to update there) or only named in About. Ask them to confirm, move or drop each, and to add places nothing pointed to, such as a docs site. Most repos have none, while a topic folder outside git often points at the repos its source changes go to.
+   - Whether PROGRESS.md should be committed or kept personal. Outside git, don't ask: there's nothing to commit to.
+   - If the session started in a subfolder of a git repo, whether to track the whole repo or just this folder.
+4. Create PROGRESS.md from the template with their answers, in the folder Where PROGRESS.md lives gives: the About line, Goal and Next as confirmed, and the confirmed places under Related, or `- (none)`.
+5. Wire it in, in the same folder. If committed, edit `CLAUDE.md`. If personal, use `CLAUDE.local.md` and add its folder's `PROGRESS.md` and `CLAUDE.local.md` to the repo's local exclude file (its path comes from `git rev-parse --git-path info/exclude`), skipping either one if the file already lists it. Write the entries as paths from the git root: `/PROGRESS.md` at the root, `/packages/api/PROGRESS.md` in a subfolder (`git rev-parse --show-prefix` gives the prefix). Don't use `.gitignore` for this: it is committed, so the personal choice would end up in everyone's copy. Outside git, use `CLAUDE.md` and skip the exclude. Create `CLAUDE.md` or `CLAUDE.local.md` if it is missing. Add this block once:
 
    ```markdown
    @PROGRESS.md
@@ -107,7 +123,7 @@ Trimming: Done is trimmed automatically, but the other sections only grow. When 
    The `@PROGRESS.md` import is what makes the file load in every session and come back after `/compact`, and the Workflow rules are what let the user speak plainly instead of naming modes.
 
    Workflow-block check: if `CLAUDE.md` or `CLAUDE.local.md` already has the `@PROGRESS.md` import, don't add the block again. Compare its `## Workflow` section with the one above. If they differ, show the difference and offer to replace it. On a yes, replace only that section, keep everything else in the file, and say the new rules apply from the next session or after `/clear`. Repos set up with an older version of this skill get the current rules this way.
-5. Confirm in one line and suggest the `next` command, in the form the user typed (see the top).
+6. Confirm in one line and suggest the `next` command, in the form the user typed (see the top).
 
 ## add
 

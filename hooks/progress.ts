@@ -2,6 +2,7 @@
 // file, so every change goes through the skill.
 //
 //   # Progress
+//   About: ...   (since 0.9.0; the pane doesn't show it)
 //   Goal: ...
 //   ## Current focus
 //   - (none)
@@ -11,7 +12,8 @@
 //   - ...
 //
 // Unknown headings and the lines under them are skipped, not dropped from
-// anywhere, since nothing is written back.
+// anywhere, since nothing is written back. So are lines before the first
+// heading other than Goal, such as About.
 
 import type { NextItem, ProgressDoc, SectionKey } from '../types'
 
