@@ -33,7 +33,7 @@ The user usually won't name a mode. Map plain words like this:
 
 If PROGRESS.md doesn't exist and the mode isn't `init`, say so and offer `init`.
 
-Direct edits the user asks for in plain words, such as reordering Next, dropping a Next item or a parked idea, adding or dropping a Related entry, or rewording an entry, the About line or Goal, don't need a mode: make exactly that change and confirm in one line.
+Direct edits the user asks for in plain words, such as reordering Next, dropping a Next item, a parked entry or an idea, moving an entry between Next, Parking lot and Ideas, adding or dropping a Related entry, or rewording an entry, the About line or Goal, don't need a mode: make exactly that change and confirm in one line.
 
 ## PROGRESS.md format
 
@@ -61,6 +61,9 @@ Goal: ...
 ## Parking lot
 - ...
 
+## Ideas
+- ...
+
 ## Gotchas
 - ...
 
@@ -77,9 +80,10 @@ Rules for the file:
 - One line per entry. No code snippets, file dumps or stack traces.
 - Decisions are one line each, with the reason.
 - An empty section holds `- (none)`.
+- Next, Parking lot and Ideas hold work by how settled it is. Next is upcoming, approved work, in order. Parking lot is approved work for later, plus anything just parked that the user hasn't sorted yet. Ideas are things noted for the future with no plan to do them; they stay there until the user promotes one, and modes never offer them for promotion on their own. A file without Ideas has none; add the section with its first entry, right after Parking lot.
 - Related lists folders or repos outside PROGRESS.md's own that items also change, such as a docs site, a shared library, or the repos a topic folder's source changes go to. Give each one's path, relative to PROGRESS.md's folder when it sits nearby so it works on another machine with the same layout, and what to update there and when: `` `../site`: the plugins page; update it when a plugin is added or renamed``. A file without the section has none; add the section with its first entry.
 
-Trimming: Done is trimmed automatically, but the other sections only grow. When the file is still over about 60 lines, propose specific cuts in one message: merge related Decisions into one line, drop Gotchas that no longer apply, and point out Parking lot entries that look stale or already handled and Related entries no longer used. Apply only the cuts the user approves. Next isn't trimmed: if it's what makes the file long, say so and leave it to the user. `done` and `status` both check for this.
+Trimming: Done is trimmed automatically, but the other sections only grow. When the file is still over about 60 lines, propose specific cuts in one message: merge related Decisions into one line, drop Gotchas that no longer apply, and point out Parking lot and Ideas entries that look stale or already handled and Related entries no longer used. Apply only the cuts the user approves. Next isn't trimmed: if it's what makes the file long, say so and leave it to the user. `done` and `status` both check for this.
 
 ## Where PROGRESS.md lives
 
@@ -136,13 +140,13 @@ Trimming: Done is trimmed automatically, but the other sections only grow. When 
 
 1. Read PROGRESS.md.
 2. If Current focus already has an item, ask whether to keep going with it or switch. On a switch, move the current item back to the top of Next with a short note on where it stopped.
-3. Take the named item, or the top unchecked item in Next, and move it to Current focus, without its checkbox. If Next has no unchecked items, say so: list any Parking lot entries and ask which to promote, or ask what to work on next if the Parking lot is empty too. Move a promoted entry out of the Parking lot, put the answer in Current focus, and continue from here.
+3. Take the named item (from any section, Ideas included), or the top unchecked item in Next, and move it to Current focus, without its checkbox. If Next has no unchecked items, say so: list any Parking lot entries and ask which to promote, or ask what to work on next if the Parking lot is empty too. Move a promoted entry out of the Parking lot, put the answer in Current focus, and continue from here.
 4. Enter plan mode and write a plan scoped to that item only. If the item affects a place listed under Related, include the changes there as steps that name the place. If the session can't reach that folder, ask the user to add it (`/add-dir <path>` in the CLI). Read that place's own `CLAUDE.md` and `CLAUDE.local.md` before planning there, since a session started elsewhere may not load them, and follow their rules, such as working on a branch. If you can't enter plan mode yourself, ask the user to switch to it.
 5. Don't implement anything until the user approves the plan.
 
 ## park
 
-1. Add the idea to Parking lot as one line, noting where it came up if that helps later.
+1. Add the idea to Parking lot as one line, noting where it came up if that helps later. If the user says it's only an idea with no plan to do it, add it to Ideas instead.
 2. Don't investigate, fix or discuss it further.
 3. Confirm in a few words and go back to the current item.
 
@@ -161,18 +165,18 @@ Also do this unprompted during any work: when you notice an unrelated bug, refac
    - Add anything surprising that would trip up future work to Gotchas.
    - Trim Done to 10 entries.
    - If the file is still over about 60 lines, propose cuts (see Trimming).
-4. If Parking lot has entries, list them briefly and ask which, if any, to promote to Next, leaving out any you just proposed cutting. Move only what the user picks.
+4. If Parking lot has entries, list them briefly, leaving out any you just proposed cutting, and ask in one message which, if any, to promote to Next and which to move to Ideas because there's no plan to do them. The rest stay parked as approved for later. Move only what the user picks.
 5. Once any questions from steps 3 and 4 are answered, suggest committing the item's changes in a git repo, and in each Related repo the item changed (don't commit unless asked). Outside git, suggest it only for those Related repos: the folder's own files stay as they are. Then tell the user to run `/clear` and then the `next` command, in the form they typed (see the top), to start the next item with a fresh context. You can't run `/clear` yourself.
 
 Also offer this unprompted: when the current item's work looks finished, such as its plan's steps being done and its checks passing, say so in one line and offer to checkpoint it. Don't checkpoint without a yes.
 
 ## status
 
-Read PROGRESS.md and report in a few lines: the current focus, the next three items, and how many items are parked. If the file is over about 60 lines, say so and offer to trim it (see Trimming). If the session has covered a lot of ground, suggest `/context` to check usage, and the `done` command (in the form the user typed, see the top) then `/clear` if the current item is finished.
+Read PROGRESS.md and report in a few lines: the current focus, the next three items, and how many items are parked and how many ideas are noted. If the file is over about 60 lines, say so and offer to trim it (see Trimming). If the session has covered a lot of ground, suggest `/context` to check usage, and the `done` command (in the form the user typed, see the top) then `/clear` if the current item is finished.
 
 ## Guardrails
 
-- Never remove Parking lot, Next or Related entries, or change Decisions, without the user's say.
+- Never remove or move Next, Parking lot, Ideas or Related entries, or change Decisions, without the user's say.
 - Never start a second item while one is in Current focus.
 - PROGRESS.md stays where `init` created it. Never move it, or create a second one in the same folder tree, without asking.
 - In a repo or folder with PROGRESS.md, "task" and "item" mean its entries unless the user names another list, such as a `.claude/tasks.md` list or a personal tracker.

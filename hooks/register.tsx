@@ -6,7 +6,7 @@ import { SECTION_TITLE, SKILL, empty, openNext, parse, summary } from './progres
 const PANE = 'progress'
 const FILE = 'PROGRESS.md'
 
-const FOLDS: readonly Exclude<SectionKey, 'focus' | 'next'>[] = ['parked', 'done', 'decisions', 'gotchas', 'related']
+const FOLDS: readonly Exclude<SectionKey, 'focus' | 'next'>[] = ['parked', 'ideas', 'done', 'decisions', 'gotchas', 'related']
 
 const HELP = [
   '/progress          show or hide the Progress pane',
