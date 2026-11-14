@@ -7,7 +7,8 @@ for one habit: working on one item at a time, and writing side ideas down
 instead of chasing them. The same plugin adds a **Progress** pane that shows
 where you are without asking Claude.
 
-`PROGRESS.md` has a one-line goal and seven short sections: **Current focus**, **Next**, **Done**
+`PROGRESS.md` opens with an **About** line (what the project is and what it
+depends on) and a one-line goal, then seven short sections: **Current focus**, **Next**, **Done**
 (last 10), **Decisions**, **Parking lot**, **Gotchas** and **Related** (other
 folders or repos the work also changes). It's current state,
 not a log, and stays under about 60 lines: when it grows past that, Claude
@@ -19,7 +20,7 @@ The skill has six modes:
 
 | Command | What it does |
 | --- | --- |
-| `/project-progress init` | Creates `PROGRESS.md` and adds the import and workflow rules to `CLAUDE.md`. Asks whether to commit the file or keep it personal (through `CLAUDE.local.md`, with both files listed in the repo's local `.git/info/exclude` so your `.gitignore` stays untouched). Started in a subfolder of a repo, it also asks whether to track the whole repo or just that folder. In a folder without git, such as a topic folder, it creates the file right there, uses `CLAUDE.md` and doesn't ask about committing. Also asks whether the work changes other folders or repos, such as a docs site. Never overwrites an existing `PROGRESS.md`. In a repo set up with an older version, it offers to update the workflow rules. |
+| `/project-progress init` | Looks before it asks: the conversation so far, the folder's README, manifests (`package.json`, `pyproject.toml` and the like) and `CLAUDE.md`, and the folders or repos they point at, such as a `file:../shared` dependency. Then asks once, with drafts to confirm or correct: what the project is about, the goal, the first Next items, and the related folders or repos it found (with what to update there), plus any it missed, such as a docs site. Asks whether to commit the file or keep it personal (through `CLAUDE.local.md`, with both files listed in the repo's local `.git/info/exclude` so your `.gitignore` stays untouched). Started in a subfolder of a repo, it also asks whether to track the whole repo or just that folder. In a folder without git, such as a topic folder, it creates the file right there, uses `CLAUDE.md` and doesn't ask about committing. Then creates `PROGRESS.md` and adds the import and workflow rules to `CLAUDE.md`. Never overwrites an existing `PROGRESS.md`. In a repo set up with an older version, it offers to update the workflow rules and to add an About line. |
 | `/project-progress add <item>` | Adds an item to Next, at the bottom unless you say where. Also reorders or drops Next items when you ask. |
 | `/project-progress next` | Moves the next item into Current focus and starts a plan for just that item, with steps in any Related place it affects. Nothing is built until you approve the plan. If Next is empty, offers the parked ideas or asks what to work on. |
 | `/project-progress park <idea>` | Writes a side idea to the Parking lot and goes back to the current item. Claude also parks unrelated bugs or refactors it notices on its own. |
@@ -54,7 +55,9 @@ from the list. When it's installed as a plugin, its full name is
 
 **Repos set up with an older version** keep their old workflow rules. Run
 `/project-progress init` again: it leaves `PROGRESS.md` alone, shows how the
-rules changed, and replaces them if you say yes.
+rules changed, and replaces them if you say yes. If the file has no About line
+yet, it drafts one and adds it if you say yes. A file without one works the
+same in every mode and in the pane.
 
 ## Monorepos and folders without git
 
@@ -96,8 +99,11 @@ line each, with the path and what to update there:
 ```
 
 A path relative to `PROGRESS.md`'s folder keeps working on another machine
-with the same layout. `init` asks about these places, or ask Claude to add one
-later. Then `next` puts the changes there into the plan, `done` points out a
+with the same layout. `init` drafts these from the repos and folders the
+project points at, such as local path dependencies, submodules or `../` paths
+in its README, and asks you to confirm them and add any it missed. A
+dependency the work only uses, never changes, goes in the About line instead.
+Ask Claude to add a place later any time. Then `next` puts the changes there into the plan, `done` points out a
 place that should have changed but didn't and suggests committing there too.
 If the session can't reach a folder, Claude asks you to add it (`/add-dir` in
 the CLI).
@@ -108,7 +114,7 @@ In a repo or folder that has `PROGRESS.md`, a **Progress** pane opens when the s
 starts. It docks beside the transcript in the fullscreen terminal layout on a
 wide enough terminal, and shows as a panel in the desktop Code tab. It shows:
 
-- the goal, the **Now** item (Current focus) and the numbered **Next** list;
+- the goal (not the About line), the **Now** item (Current focus) and the numbered **Next** list;
 - **Parked**, **Done**, **Decisions**, **Gotchas** and **Related** as folded
   lines with a count; select one to unfold it.
 

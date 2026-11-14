@@ -323,6 +323,19 @@ describe('project-progress pane', () => {
     await ui.unmount()
   })
 
+  test('a file with an About line shows the goal and not the About line', async ($, on) => {
+    world(on, { [PROGRESS]: FILE.replace('Goal:', 'About: an app built on the shared kit.\n\nGoal:') })
+    freshClock(on)
+    await $.session.start(START)
+    const ui = await $.ui.mount({ ...PANE, surface: 'terminal' })
+    expect(await ui.find({ text: /ship the app/ })).toBeDefined()
+    expect(await ui.find({ text: /shared kit/ })).toBeUndefined()
+    expect(await ui.find({ text: /Wire login/ })).toBeDefined()
+    await ui.unmount()
+    const text = await $.command.run({ ...RUN, command: 'progress', args: 'text' })
+    expect(text.text).toMatch(/^Goal: ship the app\.\nNow: nothing in progress\n/)
+  })
+
   test('without PROGRESS.md the pane offers to set it up', async ($, on) => {
     const w = world(on)
     freshClock(on)
